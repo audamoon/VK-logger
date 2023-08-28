@@ -10,15 +10,18 @@ class VKController:
         self.driver = driver
         self.finder = VKFinder(self.driver)
         self.handler = VKHandler(self.driver)
-        self.logger = VKLogger(self.driver)
+        self.__logger = VKLogger(self.driver)
 
     def choose_account(self, account_name):
         account = self.finder.find_certain_account(account_name)
-        self.handler.make_action(ActionType.ONCLICK, account)
+        if account != False:
+            self.handler.make_action(ActionType.ONCLICK, account)
+        else:
+            return account
 
     def logout(self):
         btn = self.finder.find_logout()
         self.handler.make_action(ActionType.HREF, btn, True)
 
-    def login(self):
-        return self.logger.is_save_btn_on()
+    def login(self,account_data):
+        return self.__logger.login(account_data)

@@ -9,7 +9,7 @@ class GoogleSheetController:
         self.manager.start_service(path_to_creds, sheet_id)
 
     def get_names_to_bypass(self):
-        row_ids = self.manager.reader.find_cell_id_by_word("E:E", "TRUE")
+        row_ids = self.manager.reader.find_row_id_by_word("E:E", "TRUE")
         all_names = self.manager.reader.read_range("A:A")
         bypass_names = []
         for row_id in row_ids:
@@ -17,7 +17,7 @@ class GoogleSheetController:
         return bypass_names
 
     def get_names_to_login(self):
-        row_ids = self.manager.reader.find_cell_id_by_word("F:F", "TRUE")
+        row_ids = self.manager.reader.find_row_id_by_word("F:F", "TRUE")
         all_names = self.manager.reader.read_range("A:A")
         login_names = []
         for row_id in row_ids:
@@ -42,6 +42,9 @@ class GoogleSheetController:
         
         return choosed_together
     
-    def mark_success_bypass(self,account_name):
-        row_id = self.manager.reader.find_cell_id_by_word("A:A", account_name)
-        self.manager.writer.write_cell(f"B{row_id[0]}",str(datetime.now().date()))
+    def write_word_by_name(self, account_name:str, word:str, range_letter: str):
+        cell_id = self.manager.reader.find_row_id_by_word('A:A', account_name)
+        self.manager.writer.write_cell(f"{range_letter}{cell_id[0]}", word)
+        
+    def mark_success_bypass(self,account_name:str):
+        self.write_word_by_name(account_name, str(datetime.now().date()), "B")

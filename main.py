@@ -7,27 +7,64 @@ from time import sleep
 from random import uniform
 
 driver = ChromeConfigurator().get_driver()
-controller = VKController(driver)
 
-# sheet_mgr = GoogleSheetController()
-# sheet_mgr.start_service("creds/service_account_creds.json","1oeOIuft_E3A-UNrSaeV1yILYfbyB2OQGnOPF1uxYz_c")
+vk_controller = VKController(driver)
 
-# names = sheet_mgr.get_names_to_login()
-# b = sheet_mgr.get_all_login_data(names)
-# print(b)
-# vk_main_page = "https://vk.com/"
+sheet_controller = GoogleSheetController()
+sheet_controller.start_service(
+    "creds/service_account_creds.json", "1oeOIuft_E3A-UNrSaeV1yILYfbyB2OQGnOPF1uxYz_c")
 
-# driver.get(vk_main_page)
+sheet_mgr = sheet_controller.manager
+vk_main_page = "https://vk.com/"
 
-vk_login_page = "https://vk.com/login"
-driver.get(vk_login_page)
 
-print(controller.logger.is_save_btn_on())
-# sleep(uniform(1, 3))
+def check_logged_accounts():
+    names = sheet_mgr.reader.read_range("A2:A")
+    driver.get(vk_main_page)
+    for name in names:
+        if vk_controller.finder.find_certain_account(name[0]) == False:
+            sheet_controller.write_word_by_name(name[0],"TRUE","F")
+        else:
+            sheet_controller.write_word_by_name(name[0],"FALSE","F")
 
-# for name in names:
-#     controller.choose_account(name)
-#     sleep(uniform(5, 10))
+def login_to_ten_accounts():
+    names = sheet_controller.get_names_to_login()
+    accounts_data = sheet_controller.get_all_login_data(names)
+    i = 0
+    for account_data in accounts_data:
+        if i > 10:
+            break
+        try:
+            driver.get(vk_main_page + "login")
+            is_login_success =  vk_controller.login(account_data)
+            to_sheet = str(not is_login_success).upper()
+            if is_login_success == True:
+                sheet_controller.write_word_by_name(account_data[0],to_sheet,"F")
+                sleep(uniform(4, 8))
+                vk_controller.logout()
+                sleep(uniform(1, 4))
+                i += 1
+            else:
+                pass
+        except:
+            sheet_controller.write_word_by_name(account_data[0],"Что-то пошло не так","G")
 
-#     controller.logout()
-#     sleep(uniform(1, 4))
+def bypass_accounts():
+    names = sheet_controller.get_names_to_bypass()
+    driver.get(vk_main_page)
+    for name in names:
+        try:
+            if vk_controller.choose_account(name) != False:
+                sleep(uniform(5, 10))
+                sheet_controller.mark_success_bypass(name)
+                vk_controller.logout()
+                sleep(uniform(1, 4))
+        except:
+            continue
+
+
+            
+# check_logged_accounts()
+# login_to_ten_accounts()
+# bypass_accounts()
+

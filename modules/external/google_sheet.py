@@ -63,17 +63,17 @@ class GoogleSheetReader:
         """
         return self.service.spreadsheets().values().get(spreadsheetId=self.sheet_id, range=range).execute()['values']
 
-    def find_cell_id_by_word(self, sheet_range, word):
+    def find_row_id_by_word(self, sheet_range, word):
         """
         usage example:
 
-        find_cell_id_by_word("E:E", "TRUE")
+        find_row_id_by_word("E:E", "TRUE")
 
         ===================================
 
         if you want specify list name just add: "listname!" before range:
 
-        find_cell_id_by_word("Sheet1!E:E", "TRUE")
+        find_row_id_by_word("Sheet1!E:E", "TRUE")
         """
         status_from_sheet = self.read_range(sheet_range)
         row_numbers = []
