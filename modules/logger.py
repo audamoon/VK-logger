@@ -12,11 +12,8 @@ class VKLogger:
         name = account_data[0]
         login = account_data[1]
         password = account_data[2]
-
-        save_btn = self.__is_save_btn_on()
-        if save_btn != True:
-            save_btn.click()
-            sleep(uniform(1,2))
+            
+        self.__check_savebtn()
 
         self.__enter_login(login)
         sleep(uniform(2,3))
@@ -24,7 +21,6 @@ class VKLogger:
         self.__find_captcha()
         
         self.__check_sms()
-
         sleep(uniform(2,3))
         
         self.__enter_password(password)
@@ -32,13 +28,22 @@ class VKLogger:
 
         return self.__is_success(name)
 
-    def __is_save_btn_on(self):
+    def __check_savebtn(self):
         btn = self.driver.execute_script('el = document.querySelector(".VkIdCheckbox__checkboxOn");if (window.getComputedStyle(el).display != "block"){return el}')
         if btn == None:
             return True 
         else:
-            return btn
-    
+            btn.click()
+            sleep(uniform(1,2))
+ 
+    def __enter_login(self, login:str):
+        login_input = self.driver.find_element(By.ID, "index_email")
+        login_input.click()
+        login_input.clear()
+        login_input.send_keys(login)
+        btn = self.driver.find_element(By.XPATH, "//button[contains(@class,'VkIdForm__signInButton')]")
+        btn.click()
+
     def __find_captcha(self):
         try: 
             self.driver.find_element(By.XPATH,"//form[contains(@class,'vkc__Captcha__container')]")
@@ -51,15 +56,7 @@ class VKLogger:
             sleep(uniform(2,3))
         except:
             pass
-
-    def __enter_login(self, login:str):
-        login_input = self.driver.find_element(By.ID, "index_email")
-        login_input.click()
-        login_input.clear()
-        login_input.send_keys(login)
-        btn = self.driver.find_element(By.XPATH, "//button[contains(@class,'VkIdForm__signInButton')]")
-        btn.click()
-
+   
     def __check_sms(self):
         try:
             self.driver.find_element(By.XPATH("//span[text()='Войти при помощи пароля']/parent::button")).click()

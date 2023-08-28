@@ -4,7 +4,7 @@ import os
 
 class ChromeConfigurator():
 
-    __user_path = (os.environ['LOCALAPPDATA'] + "\\Google\\Chrome\\User Data")
+    __user_path = (os.environ['LOCALAPPDATA'] + "\\Google\\Chrome\\User Data\\Profile1")
 
     def __init__(self):
         self.__set_driver()

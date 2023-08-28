@@ -8,6 +8,13 @@ class GoogleSheetController:
     def start_service(self,path_to_creds,sheet_id):
         self.manager.start_service(path_to_creds, sheet_id)
 
+    def get_all_names(self):
+        all_names = self.manager.reader.read_range("A:A")
+        names = []
+        for name in all_names:
+            names.append(name[0])
+        return names
+
     def get_names_to_bypass(self):
         row_ids = self.manager.reader.find_row_id_by_word("E:E", "TRUE")
         all_names = self.manager.reader.read_range("A:A")
@@ -22,7 +29,7 @@ class GoogleSheetController:
         login_names = []
         for row_id in row_ids:
             login_names.append(all_names[row_id-1][0])
-        return login_names
+        return login_names[:10]
     
     def get_all_login_data(self, choosed_names:list):
         all_names = self.manager.reader.read_range("A2:A")
