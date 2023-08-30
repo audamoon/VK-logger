@@ -2,7 +2,6 @@ from modules.finder import VKFinder
 from modules.handler import VKHandler
 from modules.common.attribute import ActionType
 from modules.logger import VKLogger
-import re
 
 
 class VKController:

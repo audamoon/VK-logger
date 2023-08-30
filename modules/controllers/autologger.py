@@ -23,25 +23,32 @@ class AutoLoggerController:
 
         for name in names:
             if self.vk_controller.finder.find_certain_account(name) == False:
-                self.sheet_controller.write_word_by_name(name,"TRUE","F")
+                self.sheet_controller.write_word_by_name(name,"TRUE","G")
             else:
-                self.sheet_controller.write_word_by_name(name,"FALSE","F")
+                self.sheet_controller.write_word_by_name(name,"FALSE","G")
 
-    def login_to_all_accounts(self):
-        names = self.sheet_controller.get_names_to_login()
+    def login_to_all_accounts(self, profile_id):
+        try:
+            names = self.sheet_controller.get_names_to_login()
 
-        accounts_data = self.sheet_controller.get_all_login_data(names)
+        except:
+            return False
+        accounts_data = self.sheet_controller.get_login_data(profile_id, names)
 
         for account_data in accounts_data:
-            self.driver.get(self.vk_main_page)
-            is_login_success =  self.vk_controller.login(account_data)
-            value_to_sheet = str(not is_login_success).upper()
-            if is_login_success == True:
-                self.sheet_controller.write_word_by_name(account_data[0],value_to_sheet,"F")
-                sleep(uniform(4, 8))
-                self.vk_controller.logout()
-                sleep(uniform(1, 4))
-
+            try:
+                self.driver.get(self.vk_main_page)
+                is_login_success =  self.vk_controller.login(account_data)
+                value_to_sheet = str(not is_login_success).upper() #   !!!!ATTENTION!!!!             Returns opposite to is_login_success value
+                if is_login_success == True:
+                    self.sheet_controller.write_word_by_name(account_data[0],value_to_sheet,"G")
+                    sleep(uniform(6, 10))
+                    self.vk_controller.logout()
+                    sleep(uniform(1, 4))
+                else:
+                    print("Problem with login")
+            except:
+                continue
 
     def bypass_accounts(self):
         names = self.sheet_controller.get_names_to_bypass()
