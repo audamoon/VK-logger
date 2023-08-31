@@ -1,6 +1,6 @@
 from selenium.webdriver import Chrome
 from selenium.webdriver.common.by import By
-
+import time
 
 class VKFinder:
     def __init__(self,driver:Chrome) -> None:
@@ -10,6 +10,7 @@ class VKFinder:
         return self.driver.find_elements(By.XPATH, "//button[@class='index_user_row _row inl_bl']")
 
     def find_certain_account(self, account_name:str):
+        time.sleep(2)
         accounts = self.__get_all_accounts()
         for account in accounts:
             account_name_from_vk = account.get_attribute("aria-label")

@@ -13,7 +13,7 @@ class ProfileID:
     FORTH = Profile("Profile 4").name
 
     def get_ids(self):
-        return [self.FIRST,self.SECOND,self.THIRD, self.FORTH]
+        return [self.FIRST, self.SECOND,self.THIRD, self.FORTH]
 
 class ChromeConfigurator():
     #"C:\Users\Sergey\AppData\Local\Google\Chrome\User Data\Profile 1    \Google\Chrome\User Data\Profile 1\Default"
